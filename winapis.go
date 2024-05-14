@@ -14,6 +14,7 @@ var (
 	procVirtualAllocEx           = kernel32.NewProc("VirtualAllocEx")
 	procHeapAlloc                = kernel32.NewProc("HeapAlloc")
 	procCreateThread             = kernel32.NewProc("CreateThread")
+	procCreateRemoteThread       = kernel32.NewProc("CreateRemoteThread")
 	procCreateToolhelp32Snapshot = kernel32.NewProc("CreateToolhelp32Snapshot")
 )
 
@@ -37,6 +38,14 @@ func CreateThread(hFunction *windows.LazyProc, lpThreadAttributes uintptr, dwSta
 	r0, _, _ := procCreateThread.Call(lpThreadAttributes, uintptr(dwStackSize), lpStartAddress, lpParameter, uintptr(dwCreationFlags), uintptr(unsafe.Pointer(lpThreadId)))
 	if r0 == 0 {
 		return 0, fmt.Errorf("CreateThread failed: %d", windows.GetLastError())
+	}
+	return windows.Handle(r0), nil
+}
+
+func CreateRemoteThread(hFunction *windows.LazyProc, hProcess windows.Handle, lpThreadAttributes uintptr, dwStackSize uint32, lpStartAddress uintptr, lpParameter uintptr, dwCreationFlags uint32, lpThreadId *uint32) (windows.Handle, error) {
+	r0, _, _ := procCreateRemoteThread.Call(uintptr(hProcess), lpThreadAttributes, uintptr(dwStackSize), lpStartAddress, lpParameter, uintptr(dwCreationFlags), uintptr(unsafe.Pointer(lpThreadId)))
+	if r0 == 0 {
+		return 0, fmt.Errorf("CreateRemoteThread failed: %d", windows.GetLastError())
 	}
 	return windows.Handle(r0), nil
 }
