@@ -1,8 +1,10 @@
 # go-winapis
 Module that contains some functions to use WinAPIs that are missing in the main Windows package
 
-I left to the user the power to choose when to load which DLL and get the addresses to functions. For this reason,
-the functions require a pointer to a windows.LazyProc structure, which is the associated function exported by the dll.
+I left to the user the power to choose when to load which DLL and get the addresses to functions.
+
+For this reason,
+this module requires the windows.LazyProc structures initialized with the functions exported by the DLL.
 
 DLL's must be loaded beforehand by the user:
 ```
@@ -15,3 +17,5 @@ var (
 	procCreateToolhelp32Snapshot = kernel32.NewProc("CreateToolhelp32Snapshot")
 )
 ```
+
+For custom DLLs, use NewLazyDLL with a full path instead.
