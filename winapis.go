@@ -10,8 +10,7 @@ import (
 const INVALID_HANDLE_VALUE = ^windows.Handle(0)
 
 var (
-	kernel32 = windows.NewLazySystemDLL("kernel32.dll")
-
+	kernel32                     = windows.NewLazySystemDLL("kernel32.dll")
 	procVirtualAllocEx           = kernel32.NewProc("VirtualAllocEx")
 	procHeapAlloc                = kernel32.NewProc("HeapAlloc")
 	procCreateThread             = kernel32.NewProc("CreateThread")
