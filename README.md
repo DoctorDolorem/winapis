@@ -30,7 +30,7 @@ var procVirtualAllocEx = kernel32.NewProc("VirtualAllocEx")
 
 func main(){
 
-pAddress, err := winapi.VirtualAllocEx(procVirtualAllocEx, 0, 0, 0, 0, 0,)
+pAddress, err := winapi.VirtualAllocEx(procVirtualAllocEx, hProcess, 0, 0, windows.MEM_COMMIT | windows.MEM_RESERVE, windows.PAGE_READWRITE)
 
 }
 ```
