@@ -29,6 +29,8 @@ var kernel32 = windows.NewLazySystemDLL("kernel32.dll")
 var procVirtualAllocEx = kernel32.NewProc("VirtualAllocEx")
 
 func main(){
+
 pAddress, err := winapi.VirtualAllocEx(procVirtualAllocEx, 0, 0, 0, 0, 0,)
+
 }
 ```
