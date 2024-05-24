@@ -49,10 +49,9 @@ func CreateToolhelp32Snapshot(hFunction *windows.LazyProc, dwFlags uint32, th32P
 	return windows.Handle(r0), nil
 }
 
-// Work in Progress, requires a different way to check for errors because it comes from ntdll
 func RtlIpv4StringToAddressA(hFunction *windows.LazyProc, String *uint16, Strict uint8, Address *uint32, Terminator **uint16) error {
 	r0, _, e1 := hFunction.Call(uintptr(unsafe.Pointer(String)), uintptr(Strict), uintptr(unsafe.Pointer(Address)), uintptr(unsafe.Pointer(Terminator)))
-	if r0 != 0 {
+	if r0 != uintptr(windows.STATUS_SUCCESS) {
 		return fmt.Errorf("RtlIpv4StringToAddressA failed: %s", e1)
 	}
 	return nil
