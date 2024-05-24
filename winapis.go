@@ -11,11 +11,13 @@ const INVALID_HANDLE_VALUE = ^windows.Handle(0)
 
 var (
 	kernel32                     = windows.NewLazySystemDLL("kernel32.dll")
+	ntdll                        = windows.NewLazySystemDLL("ntdll.dll")
 	procVirtualAllocEx           = kernel32.NewProc("VirtualAllocEx")
 	procHeapAlloc                = kernel32.NewProc("HeapAlloc")
 	procCreateThread             = kernel32.NewProc("CreateThread")
 	procCreateRemoteThread       = kernel32.NewProc("CreateRemoteThread")
 	procCreateToolhelp32Snapshot = kernel32.NewProc("CreateToolhelp32Snapshot")
+	procRtlIpv4StringToAddressA  = ntdll.NewProc("RtlIpv4StringToAddressA")
 )
 
 func VirtualAllocEx(hFunction *windows.LazyProc, hProcess windows.Handle, lpAddress uintptr, dwSize uintptr, flAllocationType uint32, flProtect uint32) (uintptr, error) {
@@ -56,4 +58,12 @@ func CreateToolhelp32Snapshot(hFunction *windows.LazyProc, dwFlags uint32, th32P
 		return 0, fmt.Errorf("CreateToolhelp32Snapshot failed: %d", windows.GetLastError())
 	}
 	return windows.Handle(r0), nil
+}
+
+func RtlIpv4StringToAddressA(hFunction *windows.LazyProc, String *uint16, Strict uint8, Address *uint32, Terminator **uint16) error {
+	r0, _, e1 := procRtlIpv4StringToAddressA.Call(uintptr(unsafe.Pointer(String)), uintptr(Strict), uintptr(unsafe.Pointer(Address)), uintptr(unsafe.Pointer(Terminator)))
+	if r0 != 0 {
+		return fmt.Errorf("RtlIpv4StringToAddressA failed: %s", e1)
+	}
+	return nil
 }
