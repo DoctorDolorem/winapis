@@ -9,11 +9,13 @@ Load the DLL and get the function address:
 ```
 var (
 	kernel32                     = windows.NewLazySystemDLL("kernel32.dll")
+	ntdll                        = windows.NewLazySystemDLL("ntdll.dll")
 	procVirtualAllocEx           = kernel32.NewProc("VirtualAllocEx")
 	procHeapAlloc                = kernel32.NewProc("HeapAlloc")
 	procCreateThread             = kernel32.NewProc("CreateThread")
 	procCreateRemoteThread       = kernel32.NewProc("CreateRemoteThread")
 	procCreateToolhelp32Snapshot = kernel32.NewProc("CreateToolhelp32Snapshot")
+	procRtlIpv4StringToAddressA  = ntdll.NewProc("RtlIpv4StringToAddressA")
 )
 ```
 ### Usage example:
