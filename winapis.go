@@ -9,6 +9,9 @@ import (
 
 const INVALID_HANDLE_VALUE = ^windows.Handle(0)
 
+var kernel32 = windows.NewLazySystemDLL("kernel32.dll")
+var procGetThreadContext = kernel32.NewProc("GetThreadContext")
+
 func VirtualAllocEx(hFunction *windows.LazyProc, hProcess windows.Handle, lpAddress uintptr, dwSize uintptr, flAllocationType uint32, flProtect uint32) (uintptr, error) {
 	r0, _, _ := hFunction.Call(uintptr(hProcess), lpAddress, dwSize, uintptr(flAllocationType), uintptr(flProtect))
 	if r0 == 0 {
@@ -53,6 +56,14 @@ func RtlIpv4StringToAddressA(hFunction *windows.LazyProc, String *uint16, Strict
 	r0, _, e1 := hFunction.Call(uintptr(unsafe.Pointer(String)), uintptr(Strict), uintptr(unsafe.Pointer(Address)), uintptr(unsafe.Pointer(Terminator)))
 	if r0 != uintptr(windows.STATUS_SUCCESS) {
 		return fmt.Errorf("RtlIpv4StringToAddressA failed: %s", e1)
+	}
+	return nil
+}
+
+func GetThreadContext(hThread windows.Handle, lpContext *windows.Context) error {
+	r0, _, e1 := procGetThreadContext.Call(uintptr(hThread), uintptr(unsafe.Pointer(lpContext)))
+	if r0 == 0 {
+		return fmt.Errorf("GetThreadContext failed: %s", e1)
 	}
 	return nil
 }
